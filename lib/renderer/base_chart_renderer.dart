@@ -14,21 +14,16 @@ abstract class BaseChartRenderer<T> {
   Paint chartPaint = Paint()
     ..isAntiAlias = true
     ..filterQuality = FilterQuality.high
-    ..strokeWidth = 1.0
+    ..strokeWidth = 1
     ..color = Colors.red;
   Paint gridPaint = Paint()
     ..isAntiAlias = true
     ..filterQuality = FilterQuality.high
-    ..strokeWidth = 0.5
+    ..strokeWidth = 1
     ..color = Color(0xff4c5c74);
 
-  BaseChartRenderer({
-    required this.style,
-    required this.chartRect,
-    required this.maxValue,
-    required this.minValue,
-    this.dataFormat
-  }) {
+  BaseChartRenderer(
+      {required this.style, required this.chartRect, required this.maxValue, required this.minValue, this.dataFormat}) {
     if (maxValue == minValue) {
       maxValue *= 1.5;
       minValue /= 2;

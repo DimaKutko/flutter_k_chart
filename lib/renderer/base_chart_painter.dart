@@ -50,21 +50,21 @@ abstract class BaseChartPainter extends CustomPainter {
   List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
   double xFrontPadding;
 
-  BaseChartPainter({
-    required this.style,
-    this.data,
-    required this.scaleX,
-    required this.scrollX,
-    required this.isLongPress,
-    required this.selectX,
-    required this.xFrontPadding,
-    this.isOnTap = false,
-    this.mainState = MainState.MA,
-    this.volHidden = false,
-    this.isTapShowInfoDialog = false,
-    this.secondaryState = SecondaryState.MACD,
-    this.isLine = false
-  }) {
+  BaseChartPainter(
+      {required this.style,
+      this.data,
+      required this.scaleX,
+      required this.scrollX,
+      required this.isLongPress,
+      required this.selectX,
+      required this.xFrontPadding,
+      required this.mFormats,
+      this.isOnTap = false,
+      this.mainState = MainState.MA,
+      this.volHidden = false,
+      this.isTapShowInfoDialog = false,
+      this.secondaryState = SecondaryState.MACD,
+      this.isLine = false}) {
     mItemCount = data?.length ?? 0;
     mPointWidth = style.pointWidth;
     mGridRows = style.gridRows;
@@ -89,11 +89,14 @@ abstract class BaseChartPainter extends CustomPainter {
     int time = secondTime - firstTime;
     time ~/= 1000;
     //月线
-    if (time >= 24 * 60 * 60 * 28) mFormats = [yy, '-', mm];
+    if (time >= 24 * 60 * 60 * 28)
+      mFormats = [yy, '-', mm];
     //日线等
-    else if (time >= 24 * 60 * 60) mFormats = [yy, '-', mm, '-', dd];
+    else if (time >= 24 * 60 * 60)
+      mFormats = [yy, '-', mm, '-', dd];
     //小时线等
-    else mFormats = [mm, '-', dd, ' ', HH, ':', nn];
+    else
+      mFormats = [mm, '-', dd, ' ', HH, ':', nn];
   }
 
   @override
@@ -164,16 +167,13 @@ abstract class BaseChartPainter extends CustomPainter {
     mainHeight -= secondaryHeight;
 
     mMainRect = Rect.fromLTRB(0, style.main.padding.top, mWidth, style.main.padding.top + mainHeight);
-    if (volHidden != true) mVolRect = Rect.fromLTRB(0, mMainRect.bottom + style.secondary.padding.top, mWidth, mMainRect.bottom + volHeight);
+    if (volHidden != true)
+      mVolRect = Rect.fromLTRB(0, mMainRect.bottom + style.secondary.padding.top, mWidth, mMainRect.bottom + volHeight);
 
     //secondaryState == SecondaryState.NONE隐藏副视图
     if (secondaryState != SecondaryState.NONE) {
-      mSecondaryRect = Rect.fromLTRB(
-        0,
-        mMainRect.bottom + volHeight + style.secondary.padding.top,
-        mWidth,
-        mMainRect.bottom + volHeight + secondaryHeight
-      );
+      mSecondaryRect = Rect.fromLTRB(0, mMainRect.bottom + volHeight + style.secondary.padding.top, mWidth,
+          mMainRect.bottom + volHeight + secondaryHeight);
     }
   }
 
@@ -239,26 +239,20 @@ abstract class BaseChartPainter extends CustomPainter {
   }
 
   void getVolMaxMinValue(KLineEntity item) {
-    mVolMaxValue = max(mVolMaxValue,
-        max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
-    mVolMinValue = min(mVolMinValue,
-        min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
+    mVolMaxValue = max(mVolMaxValue, max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
+    mVolMinValue = min(mVolMinValue, min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
   }
 
   void getSecondaryMaxMinValue(KLineEntity item) {
     if (secondaryState == SecondaryState.MACD) {
       if (item.macd != null) {
-        mSecondaryMaxValue =
-            max(mSecondaryMaxValue, max(item.macd!, max(item.dif!, item.dea!)));
-        mSecondaryMinValue =
-            min(mSecondaryMinValue, min(item.macd!, min(item.dif!, item.dea!)));
+        mSecondaryMaxValue = max(mSecondaryMaxValue, max(item.macd!, max(item.dif!, item.dea!)));
+        mSecondaryMinValue = min(mSecondaryMinValue, min(item.macd!, min(item.dif!, item.dea!)));
       }
     } else if (secondaryState == SecondaryState.KDJ) {
       if (item.d != null) {
-        mSecondaryMaxValue =
-            max(mSecondaryMaxValue, max(item.k!, max(item.d!, item.j!)));
-        mSecondaryMinValue =
-            min(mSecondaryMinValue, min(item.k!, min(item.d!, item.j!)));
+        mSecondaryMaxValue = max(mSecondaryMaxValue, max(item.k!, max(item.d!, item.j!)));
+        mSecondaryMinValue = min(mSecondaryMinValue, min(item.k!, min(item.d!, item.j!)));
       }
     } else if (secondaryState == SecondaryState.RSI) {
       if (item.rsi != null) {
@@ -281,8 +275,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   double xToTranslateX(double x) => -mTranslateX + x / scaleX;
 
-  int indexOfTranslateX(double translateX) =>
-      _indexOfTranslateX(translateX, 0, mItemCount - 1);
+  int indexOfTranslateX(double translateX) => _indexOfTranslateX(translateX, 0, mItemCount - 1);
 
   ///二分查找当前值的index
   int _indexOfTranslateX(double translateX, int start, int end) {
@@ -292,9 +285,7 @@ abstract class BaseChartPainter extends CustomPainter {
     if (end - start == 1) {
       double startValue = getX(start);
       double endValue = getX(end);
-      return (translateX - startValue).abs() < (translateX - endValue).abs()
-          ? start
-          : end;
+      return (translateX - startValue).abs() < (translateX - endValue).abs() ? start : end;
     }
     int mid = start + (end - start) ~/ 2;
     double midValue = getX(mid);
@@ -321,7 +312,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   ///获取平移的最小值
   double getMinTranslateX() {
-    var x = -mDataLen + mWidth / scaleX - mPointWidth / 2 -  xFrontPadding;
+    var x = -mDataLen + mWidth / scaleX - mPointWidth / 2 - xFrontPadding;
     return x >= 0 ? 0.0 : x;
   }
 

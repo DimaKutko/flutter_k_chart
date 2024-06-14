@@ -23,24 +23,25 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   double scaleX;
   late Paint mLinePaint;
 
-  MainRenderer({
-    required this.style,
-    required super.chartRect,
-    required super.maxValue,
-    required super.minValue,
-    this.state = MainState.NONE,
-    this.isLine = false,
-    required this.scaleX,
-    this.maDayList = const [5, 10, 20],
-    super.dataFormat
-  }) : super(style: style) {
+  MainRenderer(
+      {required this.style,
+      required super.chartRect,
+      required super.maxValue,
+      required super.minValue,
+      this.state = MainState.NONE,
+      this.isLine = false,
+      required this.scaleX,
+      this.maDayList = const [5, 10, 20],
+      super.dataFormat})
+      : super(style: style) {
     mLinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeWidth = mLineStrokeWidth
       ..color = style.colors.kLine;
 
-    _contentRect = Rect.fromLTRB(chartRect.left, chartRect.top + _contentPadding, chartRect.right, chartRect.bottom - _contentPadding);
+    _contentRect = Rect.fromLTRB(
+        chartRect.left, chartRect.top + _contentPadding, chartRect.right, chartRect.bottom - _contentPadding);
 
     if (maxValue == minValue) {
       maxValue *= 1.5;
@@ -58,13 +59,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     if (state == MainState.MA) {
       span = TextSpan(children: _createMATextSpan(data));
     } else if (state == MainState.BOLL) {
-      span = TextSpan(
-        children: [
-          if (data.up != 0) TextSpan(text: 'BOLL:${format(data.mb)}    ', style: getTextStyle(style.colors.ma5)),
-          if (data.mb != 0) TextSpan(text: 'UB:${format(data.up)}    ', style: getTextStyle(style.colors.ma10)),
-          if (data.dn != 0)TextSpan(text: 'LB:${format(data.dn)}    ', style: getTextStyle(style.colors.ma30)),
-        ]
-      );
+      span = TextSpan(children: [
+        if (data.up != 0) TextSpan(text: 'BOLL:${format(data.mb)}    ', style: getTextStyle(style.colors.ma5)),
+        if (data.mb != 0) TextSpan(text: 'UB:${format(data.up)}    ', style: getTextStyle(style.colors.ma10)),
+        if (data.dn != 0) TextSpan(text: 'LB:${format(data.dn)}    ', style: getTextStyle(style.colors.ma30)),
+      ]);
     }
 
     if (span == null) return;
@@ -77,7 +76,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     List<InlineSpan> result = [];
     for (int i = 0; i < (data.maValueList?.length ?? 0); i++) {
       if (data.maValueList?[i] != 0) {
-        var item = TextSpan(text: 'MA${maDayList[i]}:${format(data.maValueList![i])}    ', style: getTextStyle(style.getMAColor(i)));
+        var item = TextSpan(
+            text: 'MA${maDayList[i]}:${format(data.maValueList![i])}    ', style: getTextStyle(style.getMAColor(i)));
         result.add(item);
       }
     }
@@ -125,7 +125,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
     mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
     mLineFillPath!.lineTo(lastX, getY(lastPrice));
-    mLineFillPath!.cubicTo((lastX + curX) / 2, getY(lastPrice), (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
+    mLineFillPath!
+        .cubicTo((lastX + curX) / 2, getY(lastPrice), (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
     mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
     mLineFillPath!.close();
 
@@ -157,7 +158,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     var low = getY(curPoint.low);
     var open = getY(curPoint.open);
     var close = getY(curPoint.close);
-    double r = style.candleWidth / 2;
+    double r = style.candleWidth - 2.5;
     double lineR = style.candleLineWidth / 2;
 
     if (open >= close) {
@@ -199,8 +200,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (i == 0) {
         tp.paint(canvas, Offset(offsetX, style.padding.top));
       } else {
-        tp.paint(
-            canvas, Offset(offsetX, rowSpace * i - tp.height + style.padding.top));
+        tp.paint(canvas, Offset(offsetX, rowSpace * i - tp.height + style.padding.top));
       }
     }
   }
@@ -215,8 +215,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     }
     double columnSpace = chartRect.width / gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, style.padding.top / 3),
-          Offset(columnSpace * i, chartRect.bottom), gridPaint);
+      canvas.drawLine(
+          Offset(columnSpace * i, style.padding.top / 3), Offset(columnSpace * i, chartRect.bottom), gridPaint);
     }
   }
 
